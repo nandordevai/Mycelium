@@ -16,6 +16,7 @@ public class MyceliumGenerator : MonoBehaviour
     int maxNeighbours = 2;
     float branchingProbability = .75f;
     List<Mesh> branches = new List<Mesh>();
+    List<Node> nodes = new List<Node>();
 
     public class Node
     {
@@ -120,11 +121,12 @@ public class MyceliumGenerator : MonoBehaviour
         var root = new Node();
         root.position = new Vector3(0, 0, 0);
         root.direction = Vector3.up;
-        var nodes = new List<Node>();
         nodes.Add(root);
         int n = 1;
+        List<Node> newNodes = new List<Node>();
         while (n < maxNodes)
         {
+            newNodes.Clear();
             var tips = nodes.FindAll(_ => _.tip);
             if (tips.Count == 0) break;
             tips.ForEach(parent =>
@@ -138,13 +140,13 @@ public class MyceliumGenerator : MonoBehaviour
                     : parent.Beget();
                 foreach (var child in children)
                 {
-                    nodes.Add(child);
+                    newNodes.Add(child);
                     branches.Add(child.MakeConnectionTo(parent));
+                    n++;
                 }
                 parent.tip = false;
-                n++;
-                if (branching) n++;
             });
+            nodes.AddRange(newNodes);
         }
         var combine = CombineBranches();
         var filter = GetComponent<MeshFilter>();
@@ -158,6 +160,12 @@ public class MyceliumGenerator : MonoBehaviour
         for (int i = 0; i < branches.Count; i++)
         {
             combine[i].mesh = branches[i];
+        }
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.transform.position = nodes[i].position;
+            sphere.transform.localScale = new Vector3(.3f, .3f, .3f);
         }
         return combine;
     }
