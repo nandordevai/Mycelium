@@ -13,10 +13,12 @@ public class MyceliumGenerator : MonoBehaviour
     public static float maxDistance = 5;
     public static float curveDisplacement = .5f;
     public int maxNodes = 10;
-    int maxNeighbours = 2;
-    float branchingProbability = .75f;
+    public int maxNeighbours = 2;
+    public float branchingProbability = .75f;
+
     List<Mesh> branches = new List<Mesh>();
     List<Node> nodes = new List<Node>();
+    float sphereScale = .26f;
 
     public class Node
     {
@@ -165,7 +167,7 @@ public class MyceliumGenerator : MonoBehaviour
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = nodes[i].position;
-            sphere.transform.localScale = new Vector3(.3f, .3f, .3f);
+            sphere.transform.localScale = new Vector3(sphereScale, sphereScale, sphereScale);
         }
         return combine;
     }
